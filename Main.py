@@ -84,7 +84,6 @@ def check_if_workers_terminated_and_shutdown():
         shutdown()
 
 def shutdown():
-    # http://flask.pocoo.org/snippets/67/
     func = request.environ.get('werkzeug.server.shutdown')
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')

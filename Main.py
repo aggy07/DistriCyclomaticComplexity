@@ -19,38 +19,6 @@ total_time = 0
 app = Flask(__name__)
 api = Api(app)
 
-class RegisterWorker(Resource):
-
-    def get(self):
-        global NUM_WORKERS
-        registration_request = request.get_json()['registration_request']
-        if registration_request is True:
-            response = {"worker_id": NUM_WORKERS}
-            NUM_WORKERS += 1
-            gi.print_to_console('RegisterWorker:', 'Registered new worker {0}'.format(NUM_WORKERS))
-        else:
-            response = {"worker_id": None}
-
-        return response
-
-
-def check_if_workers_terminated_and_shutdown():
-    global workers_terminated, NUM_WORKERS
-    workers_terminated += 1
-
-    if workers_terminated == NUM_WORKERS:
-        shutdown()
-
-def shutdown():
-    # http://flask.pocoo.org/snippets/67/
-    func = request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
-
-# Add url handles for registration of worker, and general worker requests
-
-
 class Manager(Resource):
 
     def get(self):
@@ -95,6 +63,38 @@ class Manager(Resource):
 
 api.add_resource(Manager, '/')
 api.add_resource(RegisterWorker, '/register_worker')
+
+
+class RegisterWorker(Resource):
+
+    def get(self):
+        global NUM_WORKERS
+        registration_request = request.get_json()['registration_request']
+        if registration_request is True:
+            response = {"worker_id": NUM_WORKERS}
+            NUM_WORKERS += 1
+            gi.print_to_console('RegisterWorker:', 'Registered new worker {0}'.format(NUM_WORKERS))
+        else:
+            response = {"worker_id": None}
+
+        return response
+
+
+def check_if_workers_terminated_and_shutdown():
+    global workers_terminated, NUM_WORKERS
+    workers_terminated += 1
+
+    if workers_terminated == NUM_WORKERS:
+        shutdown()
+
+def shutdown():
+    # http://flask.pocoo.org/snippets/67/
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+
+# Add url handles for registration of worker, and general worker requests
 
 
 if __name__ == '__main__':

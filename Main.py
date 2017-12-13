@@ -19,6 +19,19 @@ total_time = 0
 app = Flask(__name__)
 api = Api(app)
 
+def check_if_workers_terminated_and_shutdown():
+    global workers_terminated, NUM_WORKERS
+    workers_terminated += 1
+
+    if workers_terminated == NUM_WORKERS:
+        shutdown()
+
+def shutdown():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+
 class Manager(Resource):
 
     def get(self):
@@ -76,18 +89,6 @@ class RegisterWorker(Resource):
         return response
 
 
-def check_if_workers_terminated_and_shutdown():
-    global workers_terminated, NUM_WORKERS
-    workers_terminated += 1
-
-    if workers_terminated == NUM_WORKERS:
-        shutdown()
-
-def shutdown():
-    func = request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
 
 # Add url handles for registration of worker, and general worker requests
 

@@ -61,10 +61,6 @@ class Manager(Resource):
             print 'Finished timing at '.format(str(end_time))
 
 
-api.add_resource(Manager, '/')
-api.add_resource(RegisterWorker, '/register_worker')
-
-
 class RegisterWorker(Resource):
 
     def get(self):
@@ -95,6 +91,9 @@ def shutdown():
     func()
 
 # Add url handles for registration of worker, and general worker requests
+
+api.add_resource(Manager, '/')
+api.add_resource(RegisterWorker, '/register_worker')
 
 
 if __name__ == '__main__':

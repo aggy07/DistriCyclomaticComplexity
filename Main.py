@@ -5,7 +5,7 @@ from flask import request
 import Git as gi
 import sys
 NUM_WORKERS = 0
-ROOT_DIR = "ManagerDir"
+ROOT_DIR = "MainDir"
 repository = None
 commits_list = {}
 current_commit_index = 0
@@ -19,14 +19,14 @@ total_time = 0
 app = Flask(__name__)
 api = Api(app)
 
-def check_if_workers_terminated_and_shutdown():
+def kill_or_not():
     global workers_terminated, NUM_WORKERS
     workers_terminated += 1
 
     if workers_terminated == NUM_WORKERS:
-        shutdown()
+        kill()
 
-def shutdown():
+def kill():
     func = request.environ.get('werkzeug.server.shutdown')
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')
@@ -45,10 +45,10 @@ class Manager(Resource):
         running = gi.get_outstanding_commits(commits_list, current_commit_index)
         if not running and finished is False:
             finished = True
-            check_if_workers_terminated_and_shutdown()
+            kill_or_not()
             return {"commit": -1, "running": "False"}
         elif not running and finished is True:
-            check_if_workers_terminated_and_shutdown()
+            kill_or_not()
             return {"commit": -1, "running": "False"}
         else:
             if NUM_WORKERS != int(required_num_workers):

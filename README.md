@@ -10,4 +10,5 @@ python Main.py Integer(argument)
 eg: python Main.py 2
 
 
-Run the 
+Run the program Slave.py in order to connect to the Master and get the Cyclomatic complexity
+
